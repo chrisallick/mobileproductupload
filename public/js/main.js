@@ -119,14 +119,14 @@ function FileSelectHandler(e) {
 	// cancel event and hover styling
 	FileDragHover(e);
 	
+	$("#wrapper .right").removeClass("hover");
 
 	// fetch FileList object
 	var files = e.target.files || e.dataTransfer.files;
 
 	// process all File objects
-	for (var i = 0, f; f = files[i]; i++) {
-		console.log( f );
-	}
+	console.log( files[0] );
+	handleFile(files[0]);
 
 }
 
