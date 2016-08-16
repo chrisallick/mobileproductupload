@@ -8,6 +8,18 @@ require 'browser'
 
 require './helpers.rb'
 
+def authorized?
+    @auth ||=  Rack::Auth::Basic::Request.new(request.env)
+    @auth.provided? && @auth.basic? && @auth.credentials && @auth.credentials == ["chris","a11ick"]
+end
+
+def protected!
+    unless authorized?
+        response['WWW-Authenticate'] = %(Basic realm="Restricted Area")
+        throw(:halt, [401, "Oops... we need your login name & password\n"])
+    end
+end
+
 enable :sessions
 set :session_secret, '*&(^B234bing_bong_tiffybaby'
 
@@ -23,11 +35,9 @@ configure do
     end
 end
 
-use Rack::Auth::Basic, "Protected Area" do |username, password|
-  username == 'chris' && password == 'a11ick'
-end
-
 get '/' do
+    protected!
+
 	if request.env['X_MOBILE_DEVICE']
 		browser = Browser.new( request.env["HTTP_USER_AGENT"] )
 
@@ -49,16 +59,14 @@ post '/upload/' do
 
 	s3_url = Helpers.s3_upload( Base64.decode64(params[:image]), ".png", uuid )
 
-	# not .to_json for json response
 	response = { :gid => gid, :s3_url => s3_url, :title => params[:title], :cost => params[:cost], :quantity => params[:quantity] }
 
     $redis.lpush( "cm_gifs", gid )
-    $redis.set( "cm_gif:#{gid}", response.to_json ) #to_json for storage
+    $redis.set( "cm_gif:#{gid}", response.to_json )
 	
 	return { :result => "success", :resp => response, :s3_url => s3_url, :gid => gid }.to_json
 end
 
-# return a gif
 get '/product/:gid' do
     if params[:gid]
     	image_object = JSON.parse($redis.get("cm_gif:#{params[:gid]}"))
