@@ -1,0 +1,15 @@
+html, body { width: 100%; height: 100%; background-color: #00aeef; }
+
+@font-face { font-family: "ggb"; src: url("../font/GarageGothic-Bold.otf"); }
+
+* { box-sizing: border-box; }
+
+::-webkit-file-upload-button { cursor:pointer; }
+
+#wrapper { opacity: 0; width: 401px; padding: 10px 0px 0px 0px; margin: 0 auto; }
+#gif { width: 400px; height: 400px; }
+#gif img { width: 100%; height: 100%; }
+#gif p { font: normal 60px "ggb"; }
+
+#startover { float: left; font: normal 40px "ggb"; display: block; text-decoration: underline; margin: 0px 20px 20px 0px; }
+#allproducts { float: left; font: normal 40px "ggb"; display: block; text-decoration: underline; margin: 0px 20px 20px 0px; }

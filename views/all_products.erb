@@ -1,0 +1,16 @@
+<div id="wrapper">
+	<div class="clear">
+		<a id="startover" href="/">Add a Product</a>
+	</div>
+
+	<ul id="products">
+		<% products.each do |product| %>
+			<li class="product" data-pid=<%= product["gid"] %> >
+				<img src='<%= product["s3_url"] %>' />
+				<p><%= product["title"] %></p>
+				<p><%= product["cost"] %></p>
+				<p><%= product["quantity"] %></p>
+			</li>
+		<% end %>
+	</ul>
+</div>
