@@ -1,0 +1,87 @@
+Ubuntu 14.04 LTS on DigitalOcean
+
+SSH IP: 162.243.220.110
+SSH Port: 22
+SSH Login: deploy
+SSH Password: -snip-
+
+$>ssh root@162.243.220.110
+$>passwd
+$>adduser deploy
+$>adduser deploy sudo
+$>visudo
+add: deploy ALL=(ALL:ALL) ALL
+$>nano /etc/ssh/sshd_config
+change: PermitRootLogin no
+add: AllowUsers deploy
+$>sudo apt-get install openssh-server
+$>sudo service ssh restart
+$>reload ssh
+$>exit
+$>ssh deploy@162.243.220.110
+$>sudo apt-get update
+
+$>sudo apt-get --force-yes install git-core curl openssl zlib1g zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev libgdbm-dev libncurses5-dev automake libtool bison libreadline6 libreadline6-dev autoconf libc6-dev ncurses-dev libxslt-dev
+
+$>gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+$>curl -L https://get.rvm.io | bash -s stable
+$>source ~/.rvm/scripts/rvm
+$>echo “source ~/.rvm/scripts/rvm” >> ~/.bashrc
+$>rvm install 2.3.0
+$>rvm default use 2.3.0
+
+$>echo “gem: —no-ri —no-rdoc” > ~/.gemrc
+
+$>gpg --keyserver keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7
+$>gpg --armor --export 561F9B9CAC40B2F7 | sudo apt-key add -
+
+$>sudo sh -c "echo 'deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main' >> /etc/apt/sources.list.d/passenger.list"
+$>sudo chown root: /etc/apt/sources.list.d/passenger.list
+$>sudo chmod 600 /etc/apt/sources.list.d/passenger.list
+$>sudo apt-get update
+
+$>sudo apt-get install nginx-full passenger
+
+$>sudo nano /etc/nginx/nginx.conf
+add: passenger_root /usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini;
+add: passenger_ruby /home/deploy/.rvm/gems/ruby-2.3.0/wrappers/ruby;
+$>sudo service nginx restart
+
+$>sudo apt-get install redis-server
+other terminal $>telnet 162.243.220.110 6379
+# test security patch?
+# needs security patch?
+# appears to be patched
+
+$>cd ~/
+$>git clone https://github.com/chrisallick/sinatra_boiler.git
+$>cd sinatra_boiler
+$>gem install bundler
+$>bundle install
+
+$>rackup --host=0.0.0.0 --port=9401
+# workin?
+# yes
+# ctrl+c
+
+$>sudo nano /etc/nginx/sites-available/default
+# delete everything
+add:
+server {
+	listen 80;
+	server_name americaletsdolunch
+	passenger_enabled on;
+	root /home/letsdolunch/sinatra_boiler/public;
+}
+
+$>sudo service nginx restart
+
+$>cd ~/
+$>git config --global user.name "Chris Allick"
+$>git config --global user.email "chrisallick@gmail.com"
+
+$>sudo apt-get update && sudo apt-get install -y python-pip python-dev libssl-dev libffi-dev
+$>sudo pip install blockstack
+
+
+sudo tail -f /var/log/nginx/error.log
