@@ -6,6 +6,6 @@ $(window).load(function(){
 
 $(document).ready(function() {
 	$(".product").click(function(){
-		window.location = "http://localhost:9299/product/" + $(this).data("pid");
+		window.location = window.location.origin + "/product/" + $(this).data("pid");
 	})
 });

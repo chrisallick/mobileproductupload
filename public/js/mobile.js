@@ -19,7 +19,7 @@ function uploadimage(image) {
         		$("#makegif").hide();
 				$("#startover").show();
 
-				var product_url = "http://localhost:9299/product/" + resp.gid
+				var product_url = window.location.origin + "/product/" + resp.gid;
 				$("#productlink a").attr("href", product_url);
 
 				$("#productlink").show();
