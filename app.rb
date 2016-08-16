@@ -82,11 +82,7 @@ post '/upload/sms/' do
         
         uuid = UUIDTools::UUID.random_create.to_s
 
-        #s3_url = Helpers.s3_upload( Base64.decode64(open(params["MediaUrl0"])), ".png", uuid )
-        #download = open(params["MediaUrl0"])
-        #web_contents  = open(params["MediaUrl0"], :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE) {|f| f.read }
         web_contents  = open(params["MediaUrl0"], :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE, :allow_redirections => :all) {|f| f.read }
-        #s3_url = Helpers.s3_upload( Base64.decode64(web_contents), ".png", uuid )
         s3_url = Helpers.s3_upload( web_contents, ".png", uuid )
 
         response = { :gid => gid, :s3_url => s3_url, :title => params[:title], :cost => params[:cost], :quantity => params[:quantity] }
@@ -99,7 +95,7 @@ post '/upload/sms/' do
         tid = settings.client.account.messages.create(
             :from => "+12402452779",
             :to => "#{params["From"]}",
-            :body => "uploaded: http://442c256f.ngrok.io/product/#{gid}"
+            :body => "uploaded: http://162.243.220.110/product/#{gid}"
         )
     else
         puts params
