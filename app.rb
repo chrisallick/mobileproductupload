@@ -76,6 +76,8 @@ end
 post '/upload/sms/' do
     if params["From"] and params["MediaUrl0"]
         puts params
+        body = ["","",""]
+        body = params["Body"].split(",")
         
         $redis.incr( "cm_gif_counter" )
         gid = $redis.get( "cm_gif_counter" )
@@ -85,12 +87,10 @@ post '/upload/sms/' do
         web_contents  = open(params["MediaUrl0"], :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE, :allow_redirections => :all) {|f| f.read }
         s3_url = Helpers.s3_upload( web_contents, ".png", uuid )
 
-        response = { :gid => gid, :s3_url => s3_url, :title => params[:title], :cost => params[:cost], :quantity => params[:quantity] }
+        response = { :gid => gid, :s3_url => s3_url, :title => body[0], :cost => body[1], :quantity => body[2] }
 
         $redis.lpush( "cm_gifs", gid )
         $redis.set( "cm_gif:#{gid}", response.to_json )
-    
-        #puts { :result => "success", :resp => response, :s3_url => s3_url, :gid => gid }.to_json
 
         tid = settings.client.account.messages.create(
             :from => "+12402452779",
@@ -104,13 +104,13 @@ post '/upload/sms/' do
             tid = settings.client.account.messages.create(
                 :from => "+12402452779",
                 :to => "#{params["From"]}",
-                :body => "ok, to add send photo"
+                :body => "ok, to add send photo with text 'title,price,quantity"
             )
         elsif params["Body"] == "view"
             tid = settings.client.account.messages.create(
                 :from => "+12402452779",
                 :to => "#{params["From"]}",
-                :body => "ok, sending you products..."
+                :body => "example (hard coded): http://162.243.220.110/product/1"
             )
         else
             tid = settings.client.account.messages.create(
