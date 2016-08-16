@@ -38,7 +38,7 @@ configure do
         $redis.set("cm_gif_counter", 0 )
     end
 
-    set :client, Twilio::REST::Client.new(Configure.getAccountSID(), Configure.getAuthToken())
+    set :client, Twilio::REST::Client.new(Configure.getFour(), Configure.getFive())
 end
 
 get '/' do
