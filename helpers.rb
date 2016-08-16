@@ -6,12 +6,12 @@ class Helpers
 
         connection = Fog::Storage.new(
             :provider                 => 'AWS',
-            :aws_secret_access_key    => Configure.getSecret(),
-            :aws_access_key_id        => Configure.getKey()
+            :aws_secret_access_key    => Configure.getTwo(),
+            :aws_access_key_id        => Configure.getOne()
         )
 
         directory = connection.directories.create(
-            :key    => Configure.getBucket(),
+            :key    => Configure.getThree(),
             :public => true
         )
     
