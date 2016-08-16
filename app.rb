@@ -6,6 +6,10 @@ require "sinatra/cookies"
 require 'base64'
 require 'browser'
 
+# require "open-uri"
+require 'open_uri_redirections'
+require 'net/https'
+
 require './helpers.rb'
 
 def authorized?
@@ -33,6 +37,8 @@ configure do
     else
         $redis.set("cm_gif_counter", 0 )
     end
+
+    set :client, Twilio::REST::Client.new(Configure.getAccountSID(), Configure.getAuthToken())
 end
 
 get '/' do
@@ -65,6 +71,61 @@ post '/upload/' do
     $redis.set( "cm_gif:#{gid}", response.to_json )
 	
 	return { :result => "success", :resp => response, :s3_url => s3_url, :gid => gid }.to_json
+end
+
+post '/upload/sms/' do
+    if params["From"] and params["MediaUrl0"]
+        puts params
+        
+        $redis.incr( "cm_gif_counter" )
+        gid = $redis.get( "cm_gif_counter" )
+        
+        uuid = UUIDTools::UUID.random_create.to_s
+
+        #s3_url = Helpers.s3_upload( Base64.decode64(open(params["MediaUrl0"])), ".png", uuid )
+        #download = open(params["MediaUrl0"])
+        #web_contents  = open(params["MediaUrl0"], :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE) {|f| f.read }
+        web_contents  = open(params["MediaUrl0"], :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE, :allow_redirections => :all) {|f| f.read }
+        #s3_url = Helpers.s3_upload( Base64.decode64(web_contents), ".png", uuid )
+        s3_url = Helpers.s3_upload( web_contents, ".png", uuid )
+
+        response = { :gid => gid, :s3_url => s3_url, :title => params[:title], :cost => params[:cost], :quantity => params[:quantity] }
+
+        $redis.lpush( "cm_gifs", gid )
+        $redis.set( "cm_gif:#{gid}", response.to_json )
+    
+        #puts { :result => "success", :resp => response, :s3_url => s3_url, :gid => gid }.to_json
+
+        tid = settings.client.account.messages.create(
+            :from => "+12402452779",
+            :to => "#{params["From"]}",
+            :body => "uploaded: http://442c256f.ngrok.io/product/#{gid}"
+        )
+    else
+        puts params
+        
+        if params["Body"] == "add"
+            tid = settings.client.account.messages.create(
+                :from => "+12402452779",
+                :to => "#{params["From"]}",
+                :body => "ok, to add send photo"
+            )
+        elsif params["Body"] == "view"
+            tid = settings.client.account.messages.create(
+                :from => "+12402452779",
+                :to => "#{params["From"]}",
+                :body => "ok, sending you products..."
+            )
+        else
+            tid = settings.client.account.messages.create(
+                :from => "+12402452779",
+                :to => "#{params["From"]}",
+                :body => "hello: add or view?"
+            )
+        end
+    end
+
+    return ""
 end
 
 get '/product/:gid' do

@@ -68,6 +68,68 @@ $(window).load(function(){
 	});
 });
 
+function FileDragHover(e) {
+	e.stopPropagation();
+	e.preventDefault();
+
+	if( $("#wrapper .right").hasClass("hover") ) {
+		return;
+	}
+
+	var x = event.clientX;
+	var y = event.clientY;
+
+	var offsets = $('#wrapper .right').offset();
+	var top = offsets.top;
+	var left = offsets.left;
+
+	if( x > left && x < left + $("#wrapper .right").width() ) {
+		if( y > top && y < top + $("#wrapper .right").height() ) {
+			$("#wrapper .right").addClass("hover");
+		}
+	}
+}
+
+function FileDragLeave(e) {
+	e.stopPropagation();
+	e.preventDefault();
+
+	if( !$("#wrapper .right").hasClass("hover") ) {
+		return;
+	}
+
+	var x = event.clientX;
+	var y = event.clientY;
+
+	var offsets = $('#wrapper .right').offset();
+	var top = offsets.top;
+	var left = offsets.left;
+
+	if( x < left || x > left + $("#wrapper .right").width() ) {
+		$("#wrapper .right").removeClass("hover");
+	}
+
+	if( y < top || y > top + $("#wrapper .right").height() ) {
+		$("#wrapper .right").removeClass("hover");
+	}
+}
+
+function FileSelectHandler(e) {
+
+	// cancel event and hover styling
+	FileDragHover(e);
+	
+
+	// fetch FileList object
+	var files = e.target.files || e.dataTransfer.files;
+
+	// process all File objects
+	for (var i = 0, f; f = files[i]; i++) {
+		console.log( f );
+	}
+
+}
+
 function buildImages() {
 	ctx.fillStyle = "#FFFFFF";
 	ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -117,4 +179,8 @@ $(document).ready(function() {
 
 		return false;
 	});
+
+	$("#wrapper .right")[0].addEventListener("drop", FileSelectHandler, false);
+	$("#wrapper .right")[0].addEventListener("dragover", FileDragHover, false);
+	$("#wrapper .right")[0].addEventListener("dragleave", FileDragLeave, false);
 });

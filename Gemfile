@@ -16,3 +16,7 @@ gem "fog"
 gem "uuidtools"
 
 gem "browser"
+
+gem "twilio-ruby"
+
+gem "open_uri_redirections"

@@ -15,6 +15,7 @@ html, body { width: 100%; height: 100%; background-color: #00aeef; }
 
 .left { float: left; width: 580px; }
 .right { float: left; width: 580px; }
+.right.hover { background-color: rgba(255, 255, 255, .6); border: 1px dashed black; }
 
 #dealwithit { width: 580px; margin: 0 auto 10px auto; background-color: #FFFFFF; }
 
@@ -33,6 +34,7 @@ html, body { width: 100%; height: 100%; background-color: #00aeef; }
 
 .buttons .filepicker { position: relative; height: 82px; width: 240px; float: left; }
 .buttons .filepicker .loadimage { font: normal 50px "ggb"; position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; z-index: 1; text-align: center; padding-top: 18px; text-decoration: none; }
+.buttons .filepicker .ordrop { font: normal 25px "ggb"; position: absolute; top: 45px; left: 221px; width: 130px; }
 .buttons .filepicker .loadimage span { text-decoration: underline; }
 .buttons .filepicker .fileselect { position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; z-index: 10; opacity: 0; cursor: pointer; }
 
