@@ -14,6 +14,15 @@ To use the demo:
 - on desktop, drag and drop or select a photo, enter information and submit
 - on SMS text 2402452779, and follow instructions (select photo, and add information: title/cost/quantity)
 
+To run locally:
+- ensure you have Ruby (I'm using 2.3.0) and Redis installed
+- clone the repo
+- "cd" to the repo
+- run "bundle install"
+- run "rackup --host=0.0.0.0 --port=9299"
+- navigate to "http://localhost:9299"
+- a lot of the information is directing to the live URL, so it will technically store information in your Redis instance, but some of the links will drive back to live site.
+
 Goal:
 - I initially wanted to build the backend of the system ontop of blockchain, and then build an SMS interface to that, but it proved quite difficult in the time frame. So I opted for a utility and server setup that would allow adding/viewing products. I suppose I should have added remove, but figured this was fine for a demo
 - If I had a touch more time I'd have turned on the API so it would be easy to integrate this into a system. At this point, it does work, but it's not documented in a way that would allow for turn key integration. Also would allow incrementing and decrementing quantities, etc, the basic CRUD stuff.
